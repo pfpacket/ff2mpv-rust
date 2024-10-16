@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::env;
 use std::fs;
 use std::path::PathBuf;
@@ -11,6 +12,7 @@ use crate::error::FF2MpvError;
 pub struct Config {
     pub player_command: String,
     pub player_args: Vec<String>,
+    pub player_envs: HashMap<String, String>,
 }
 
 impl Default for Config {
@@ -18,6 +20,7 @@ impl Default for Config {
         Self {
             player_command: "mpv".to_owned(),
             player_args: vec![],
+            player_envs: HashMap::new(),
         }
     }
 }

@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::env;
 use std::io;
 use std::process;
@@ -76,13 +77,23 @@ impl Command {
         let config = Config::build();
         let ff2mpv_message = browser::get_mpv_message()?;
         let args = [config.player_args, ff2mpv_message.options].concat();
-        Command::launch_mpv(config.player_command, args, &ff2mpv_message.url)?;
+        Command::launch_mpv(
+            config.player_command,
+            args,
+            &ff2mpv_message.url,
+            config.player_envs,
+        )?;
         browser::send_reply()?;
 
         Ok(())
     }
 
-    fn launch_mpv(command: String, args: Vec<String>, url: &str) -> Result<(), io::Error> {
+    fn launch_mpv(
+        command: String,
+        args: Vec<String>,
+        url: &str,
+        envs: HashMap<String, String>,
+    ) -> Result<(), io::Error> {
         let mut command = process::Command::new(command);
 
         command.stdout(process::Stdio::null());
@@ -91,6 +102,7 @@ impl Command {
         command.args(args);
         command.arg("--");
         command.arg(url);
+        command.envs(envs);
 
         Command::detach_mpv(&mut command);
 
